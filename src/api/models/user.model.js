@@ -11,7 +11,7 @@ const { env, jwtSecret, jwtExpirationInterval } = require('../../config/vars');
 /**
 * User Roles
 */
-const roles = ['user', 'admin'];
+const roles = ['patient', 'superAdmin', 'doctor', 'hospital', 'lab'];
 
 /**
  * User Schema
@@ -45,12 +45,22 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     enum: roles,
-    default: 'user',
+    default: 'patient',
   },
   picture: {
     type: String,
     trim: true,
   },
+  verified:{
+    type:Boolean,
+    default:false,
+  },
+  hospital:
+    {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Hospital',
+    }
+
 }, {
   timestamps: true,
 });

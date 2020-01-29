@@ -1,21 +1,25 @@
 const nodemailer = require('nodemailer');
-const { emailConfig } = require('../../../config/vars');
+const { sendGridIDPassword } = require('../../../config/vars');
 const Email = require('email-templates');
+const sgTransport = require('nodemailer-sendgrid-transport');
+
 
 // SMTP is the main transport in Nodemailer for delivering messages.
 // SMTP is also the protocol used between almost all email hosts, so its truly universal.
 // if you dont want to use SMTP you can create your own transport here
 // such as an email service API or nodemailer-sendgrid-transport
 
-const transporter = nodemailer.createTransport({
-  port: emailConfig.port,
-  host: emailConfig.host,
+
+// api key https://sendgrid.com/docs/Classroom/Send/api_keys.html
+const options = {
   auth: {
-    user: emailConfig.username,
-    pass: emailConfig.password,
-  },
-  secure: false, // upgrades later with STARTTLS -- change this based on the PORT
-});
+      api_key: sendGridIDPassword
+  }
+}
+
+  
+const transporter = nodemailer.createTransport(sgTransport(options));
+
 
 // verify connection configuration
 transporter.verify((error) => {
