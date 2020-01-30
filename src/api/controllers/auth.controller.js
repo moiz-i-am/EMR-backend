@@ -7,6 +7,7 @@ const { jwtExpirationInterval } = require('../../config/vars');
 const { omit } = require('lodash');
 const APIError = require('../utils/APIError');
 const emailProvider = require('../services/emails/emailProvider');
+const {responseHandler} = require('./general.controller');
 
 /**
  * Returns a formated object with tokens
@@ -92,21 +93,27 @@ exports.refresh = async (req, res, next) => {
   }
 };
 
-exports.sendPasswordReset = async (req, res, next) => {
+exports.passwordReset = async(email)=>{
   try {
-    const { email } = req.body;
     const user = await User.findOne({ email }).exec();
 
     if (user) {
       const passwordResetObj = await PasswordResetToken.generate(user);
       emailProvider.sendPasswordReset(passwordResetObj);
-      res.status(httpStatus.OK);
-      return res.json('success');
+      return;
     }
-    throw new APIError({
-      status: httpStatus.UNAUTHORIZED,
-      message: 'No account found with that email',
-    });
+    throw new Error('No account found with that email');
+  } catch (error) {
+    throw new Error(error);
+  }
+
+}
+
+exports.sendPasswordReset = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    await passwordReset(email);
+    return responseHandler(res, httpStatus.OK, {})
   } catch (error) {
     return next(error);
   }

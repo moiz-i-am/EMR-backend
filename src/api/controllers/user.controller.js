@@ -1,7 +1,8 @@
 const httpStatus = require('http-status');
 const { omit } = require('lodash');
 const User = require('../models/user.model');
-
+const {responseHandler} = require('./general.controller');
+const {passwordReset} = require('./auth.controller');
 /**
  * Load user and append to req.
  * @public
@@ -32,12 +33,27 @@ exports.loggedIn = (req, res) => res.json(req.user.transform());
  * Create new user
  * @public
  */
+exports.createNewUser = async (data) => {
+  try {
+    const user = new User(data);
+    const savedUser = await user.save();
+    return savedUser.transform();
+  } catch (error) {
+    next(User.checkDuplicateEmail(error));
+  }
+};
+
 exports.create = async (req, res, next) => {
   try {
-    const user = new User(req.body);
-    const savedUser = await user.save();
-    res.status(httpStatus.CREATED);
-    res.json(savedUser.transform());
+    const {name, email, password, role='patient'} = req.body;
+    let patientData = {
+      name,
+      email,
+      password,
+      role 
+    };
+    const user = await this.createNewUser(patientData);
+    return responseHandler(res, httpStatus.CREATED, user);
   } catch (error) {
     next(User.checkDuplicateEmail(error));
   }

@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const Hospital = require('../models/hospital.model');
-const User = require('../models/user.model');
+const {createNewUser} = require('./user.controller');
+const {responseHandler} = require('./general.controller');
 
 /**
  * Create new hospital
@@ -12,13 +13,10 @@ exports.create = async (req, res, next) => {
   
       const hospital = new Hospital({name, location});
       const savedHospital = await hospital.save();
-
-      const user = new User({name: userName,email,password,role, hospital:savedHospital._id});
-      await user.save();
-
-      res.status(httpStatus.CREATED);
-     res.json();
+      const payload = {name: userName,email,password,role, hospital:savedHospital._id}
+      await createNewUser(payload);
+      return responseHandler(res, httpStatus.CREATED, savedHospital)
     } catch (error) {
-      next(User.checkDuplicateEmail(error));
+      return next(error);
     }
   };

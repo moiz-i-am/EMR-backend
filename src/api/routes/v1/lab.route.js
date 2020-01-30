@@ -1,7 +1,7 @@
 const express = require('express');
 const validate = require('express-validation');
-const controller = require('../../controllers/hospital.controller');
-const {createHospital, login} = require('../../validations/hospital.validation');
+const controller = require('../../controllers/lab.controller');
+const {createLab} = require('../../validations/lab.validation');
 const router = express.Router();
 
 
@@ -32,7 +32,6 @@ router
    * @apiError (Unauthorized 401)  Unauthorized     Only authenticated users can create the data
    * @apiError (Forbidden 403)     Forbidden        Only admins can create the data
    */
-  .post(validate(createHospital), controller.create);
-
+  .post(validate(createLab), controller.create);
 
   module.exports = router;

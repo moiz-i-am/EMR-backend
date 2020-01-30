@@ -55,11 +55,14 @@ const userSchema = new mongoose.Schema({
     type:Boolean,
     default:false,
   },
-  hospital:
-    {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Hospital',
-    }
+  hospital:{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Hospital',
+  },
+  lab:{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'lab',
+  }
 
 }, {
   timestamps: true,
@@ -155,14 +158,18 @@ userSchema.statics = {
    * @returns {Promise<User, APIError>}
    */
   async findAndGenerateToken(options) {
-    const { email, password, refreshObject } = options;
+    const { email, password, refreshObject, role } = options;
     if (!email) throw new APIError({ message: 'An email is required to generate a token' });
 
-    const user = await this.findOne({ email }).exec();
+    const user = await this.findOne({ email, role }).exec();
     const err = {
       status: httpStatus.UNAUTHORIZED,
       isPublic: true,
     };
+    // if(user && !user.verified){
+    //   err.message = 'Account not verfied by admin yet';
+    //   throw new APIError(err);
+    // }
     if (password) {
       if (user && await user.passwordMatches(password)) {
         return { user, accessToken: user.token() };
