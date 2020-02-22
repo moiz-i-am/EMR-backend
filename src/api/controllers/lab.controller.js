@@ -14,7 +14,7 @@ exports.create = async (req, res, next) => {
       const savedLab = await lab.save();
       const payload = {name: userName,email,password,role, lab:savedLab._id}
       await createNewUser(payload);
-      return responseHandler(res, httpStatus.CREATED, savedHospitals)
+      return responseHandler(res, httpStatus.CREATED, savedLab)
     } catch (error) {
       return next(error);
     }

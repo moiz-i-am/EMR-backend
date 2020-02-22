@@ -39,7 +39,7 @@ exports.createNewUser = async (data) => {
     const savedUser = await user.save();
     return savedUser.transform();
   } catch (error) {
-    next(User.checkDuplicateEmail(error));
+    throw new Error(error);
   }
 };
 

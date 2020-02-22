@@ -8,7 +8,7 @@ const router = express.Router();
 router
   .route('/')
   /**
-   * @api {post} v1/users Create User
+   * @api {post} v1/hospital Create hospital
    * @apiDescription Create a new user
    * @apiVersion 1.0.0
    * @apiName CreateUser
