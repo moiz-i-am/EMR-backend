@@ -2,6 +2,7 @@ const express = require('express');
 const validate = require('express-validation');
 const controller = require('../../controllers/auth.controller');
 const oAuthLogin = require('../../middlewares/auth').oAuth;
+
 const {
   login,
   register,
@@ -73,7 +74,6 @@ router.route('/register')
  */
 router.route('/login')
   .post(validate(login), controller.login);
-
 
 /**
  * @api {post} v1/auth/refresh-token Refresh Token

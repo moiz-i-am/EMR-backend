@@ -114,7 +114,7 @@ router
    * @apiError (Forbidden 403)    Forbidden    Only user with same id or admins can access the data
    * @apiError (Not Found 404)    NotFound     User does not exist
    */
-  .get(authorize(LOGGED_USER), controller.get)
+  .get(controller.get)
   /**
    * @api {put} v1/users/:id Replace User
    * @apiDescription Replace the whole user document with a new one
