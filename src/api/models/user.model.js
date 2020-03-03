@@ -38,6 +38,22 @@ const userSchema = new mongoose.Schema({
     index: true,
     trim: true,
   },
+  phone: {
+    type: Number,
+    default: '',
+  },
+  location_city: {
+    type: String,
+    default: '',
+  },
+  location_state: {
+    type: String,
+    default: '',
+  },
+  location_country: {
+    type: String,
+    default: '',
+  },
   services: {
     facebook: String,
     google: String,
@@ -51,18 +67,18 @@ const userSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
-  verified:{
-    type:Boolean,
-    default:false,
+  verified: {
+    type: Boolean,
+    default: false,
   },
-  hospital:{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Hospital',
+  hospital: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Hospital',
   },
-  lab:{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'lab',
-  }
+  lab: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'lab',
+  },
 
 }, {
   timestamps: true,
@@ -95,7 +111,7 @@ userSchema.pre('save', async function save(next) {
 userSchema.method({
   transform() {
     const transformed = {};
-    const fields = ['id', 'name', 'email', 'picture', 'role', 'createdAt'];
+    const fields = ['id', 'name', 'email', 'picture', 'role', 'createdAt', 'phone', 'location_city', 'location_state', 'location_country'];
 
     fields.forEach((field) => {
       transformed[field] = this[field];
@@ -163,7 +179,7 @@ userSchema.statics = {
     const { email, password, refreshObject } = options;
     if (!email) throw new APIError({ message: 'An email is required to generate a token' });
 
-    //const user = await this.findOne({ email, role }).exec();
+    // const user = await this.findOne({ email, role }).exec();
     const user = await this.findOne({ email }).exec();
     const err = {
       status: httpStatus.UNAUTHORIZED,
