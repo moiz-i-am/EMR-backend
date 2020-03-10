@@ -1,8 +1,8 @@
 const httpStatus = require('http-status');
 const { omit } = require('lodash');
 const User = require('../models/user.model');
-const {responseHandler} = require('./general.controller');
-const {passwordReset} = require('./auth.controller');
+const { responseHandler } = require('./general.controller');
+const { passwordReset } = require('./auth.controller');
 /**
  * Load user and append to req.
  * @public
@@ -45,12 +45,14 @@ exports.createNewUser = async (data) => {
 
 exports.create = async (req, res, next) => {
   try {
-    const {name, email, password, role='patient'} = req.body;
+    const {
+      name, email, password, role = 'patient',
+    } = req.body;
     let patientData = {
       name,
       email,
       password,
-      role 
+      role,
     };
     const user = await this.createNewUser(patientData);
     return responseHandler(res, httpStatus.CREATED, user);

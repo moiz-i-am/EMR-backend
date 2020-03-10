@@ -71,6 +71,12 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  specializations: [
+    {
+      type: String,
+      default: '',
+    },
+  ],
   hospital: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Hospital',
@@ -111,7 +117,7 @@ userSchema.pre('save', async function save(next) {
 userSchema.method({
   transform() {
     const transformed = {};
-    const fields = ['id', 'name', 'email', 'picture', 'role', 'createdAt', 'phone', 'location_city', 'location_state', 'location_country'];
+    const fields = ['id', 'name', 'email', 'picture', 'role', 'createdAt', 'phone', 'location_city', 'location_state', 'location_country', 'specializations'];
 
     fields.forEach((field) => {
       transformed[field] = this[field];
