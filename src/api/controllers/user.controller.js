@@ -1,6 +1,7 @@
 const httpStatus = require('http-status');
 const { omit } = require('lodash');
 const User = require('../models/user.model');
+const Scheduling = require('../models/scheduling.model');
 const { responseHandler } = require('./general.controller');
 const { passwordReset } = require('./auth.controller');
 /**
@@ -46,13 +47,15 @@ exports.createNewUser = async (data) => {
 exports.create = async (req, res, next) => {
   try {
     const {
-      name, email, password, role = 'patient',
+      name, email, password, role = 'patient', timeSlots, dateRange,
     } = req.body;
     let patientData = {
       name,
       email,
       password,
       role,
+      timeSlots,
+      dateRange,
     };
     const user = await this.createNewUser(patientData);
     return responseHandler(res, httpStatus.CREATED, user);
