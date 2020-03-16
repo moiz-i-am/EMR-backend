@@ -5,6 +5,10 @@ const SchedulingSchema = new mongoose.Schema({
     type: Array,
     default: [],
   },
+  middleDates: [{
+    type: Date,
+    default: [],
+  }],
   startDate: {
     type: Date,
     default: '',
