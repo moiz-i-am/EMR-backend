@@ -47,10 +47,7 @@ exports.create = async (req, res, next) => {
       middleDates,
       user: user._id,
     };
-    console.log(doctorData);
     const today = new Date();
-    // console.log("now : "+now)
-    // console.log("start: "+startDate)
     if (startDate < today) {
       console.log('wrong date choosen');
     } else {
@@ -70,4 +67,51 @@ exports.create = async (req, res, next) => {
   } catch (error) {
     return next(error);
   }
+};
+
+/**
+ * Get Schedule list
+ * @public
+ */
+exports.list = async (req, res, next) => {
+  try {
+    const {
+      user, date,
+    } = req.body;
+
+    const scheduleData = {
+      user,
+      date,
+    };
+    const scheduling = await Scheduling.find({ $or: [{ user: scheduleData.user, startDate: date }, { user: scheduleData.user, endDate: date }, { user: scheduleData.user, middleDates: date }] }).select({ 'timeSlots': 1, '_id': 0 });
+
+    const transformedScheduling = scheduling.map(schedule => schedule);
+    res.json(transformedScheduling);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Delete schedule of specific date
+ * @public
+ */
+exports.remove = (req, res, next) => {
+  // const { user } = req;
+  const { date, user } = req.body;
+
+  const scheduleData = {
+    user,
+    date,
+  };
+
+  // const scheduling = Scheduling.update({ user: scheduleData.user, $unset: { startDate: date } });
+  // const schedulingEnd = Scheduling.update({ user: scheduleData.user, $unset: { endDate: date } });
+   const scheduling = Scheduling.update({ user: scheduleData.user, $pull: { middleDates: date } });
+
+
+  scheduling
+  .then(() => res.status(httpStatus.NO_CONTENT).end())
+    .catch(e => next(e));
+
 };
