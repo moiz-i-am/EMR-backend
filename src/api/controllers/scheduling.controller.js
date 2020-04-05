@@ -93,6 +93,44 @@ exports.list = async (req, res, next) => {
 };
 
 /**
+ * Update schedule of specific date
+ * @public
+ */
+exports.update = async (req, res, next) => {
+  // const { user } = req;
+  const { date, user, timeSlots } = req.body;
+
+  const scheduleData = {
+    user,
+    date,
+    timeSlots,
+    startDate: date,
+  };
+
+  // const scheduling = Scheduling.update({ user: scheduleData.user, $unset: { startDate: date } });
+ // const schedulingEnd = Scheduling.update({ user: scheduleData.user, $unset: { endDate: date } });
+  const scheduling = Scheduling.update({ user: scheduleData.user, $pull: { middleDates: date } });
+
+
+  scheduling.then(() => res.status(httpStatus.NO_CONTENT).end())
+    .catch(e => next(e));
+
+
+  await Scheduling.findOne({ $or: [{ user: user._id, startDate: date, endDate: date }, { user: user._id, startDate: date }, { user: user._id, endDate: date }] }, (err, data) => {
+    if (err) {
+      console.log(`MongoDB Error: ${err}`);
+      return false; // or callback
+    }
+    if (data) {
+      console.log(`Already exists ${err}`);
+    } else {
+      const newScheduling = this.createNewScheduling(scheduleData);
+      return responseHandler(res, httpStatus.CREATED, newScheduling);
+    }
+  });
+};
+
+/**
  * Delete schedule of specific date
  * @public
  */
@@ -106,12 +144,11 @@ exports.remove = (req, res, next) => {
   };
 
   // const scheduling = Scheduling.update({ user: scheduleData.user, $unset: { startDate: date } });
-  // const schedulingEnd = Scheduling.update({ user: scheduleData.user, $unset: { endDate: date } });
-   const scheduling = Scheduling.update({ user: scheduleData.user, $pull: { middleDates: date } });
+ // const schedulingEnd = Scheduling.update({ user: scheduleData.user, $unset: { endDate: date } });
+  const scheduling = Scheduling.update({ user: scheduleData.user, $pull: { middleDates: date } });
 
 
-  scheduling
-  .then(() => res.status(httpStatus.NO_CONTENT).end())
+  scheduling.then(() => res.status(httpStatus.NO_CONTENT).end())
     .catch(e => next(e));
-
 };
+
