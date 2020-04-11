@@ -2,6 +2,7 @@ const httpStatus = require('http-status');
 const { responseHandler } = require('./general.controller');
 const Booking = require('../models/booking.model');
 const Scheduling = require('../models/scheduling.model');
+const User = require('../models/user.model');
 
 /**
  * Create new user
@@ -83,5 +84,46 @@ exports.create = async (req, res, next) => {
     // });
   } catch (error) {
     return next(error);
+  }
+};
+
+
+/**
+ * Get bookings list of patient
+ * @public
+ */
+exports.listPatientBookings = async (req, res, next) => {
+  try {
+    const { patient } = req.body;
+
+    const bookingData = {
+      patient,
+    };
+    const bookings = await Booking.find({ patient: bookingData.patient }).populate({ path: 'doctor', model: User });
+
+    const transformedBooking = bookings.map(booking => booking);
+    res.json(transformedBooking);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Get bookings list of doctor
+ * @public
+ */
+exports.listDoctorBookings = async (req, res, next) => {
+  try {
+    const { doctor } = req.body;
+
+    const bookingData = {
+      doctor,
+    };
+    const bookings = await Booking.find({ doctor: bookingData.doctor }).populate({ path: 'patient', model: User });
+
+    const transformedBooking = bookings.map(booking => booking);
+    res.json(transformedBooking);
+  } catch (error) {
+    next(error);
   }
 };
