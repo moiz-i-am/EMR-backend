@@ -127,3 +127,64 @@ exports.listDoctorBookings = async (req, res, next) => {
     next(error);
   }
 };
+
+
+/**
+ * Delete user
+ * @public
+ */
+exports.remove = (req, res, next) => {
+  const { patient, doctor, date, timeSlot } = req.body;
+
+  const bookingDeleteData = {
+    patient,
+    doctor,
+    date,
+    timeSlot,
+  };
+
+  const bookings = Booking.deleteOne({
+    timeSlot: bookingDeleteData.timeSlot, date: bookingDeleteData.date, doctor: bookingDeleteData.doctor, patient: bookingDeleteData.patient,
+  });
+
+  // for reserving time slot start
+  const schedulingStart = Scheduling.updateOne(
+    { user: bookingDeleteData.doctor, startDate: date, 'timeSlots.label': timeSlot },
+    {
+      $set:
+        {
+          'timeSlots.$.reserved': 'flase',
+        },
+    },
+  );
+
+  schedulingStart.then(() => res.status(httpStatus.NO_CONTENT).end()).catch(e => next(e));
+
+  const schedulingMiddle = Scheduling.updateOne(
+    { user: bookingDeleteData.doctor, middleDates: date, 'timeSlots.label': timeSlot },
+    {
+      $set:
+        {
+          'timeSlots.$.reserved': 'false',
+        },
+    },
+  );
+
+  schedulingMiddle.then(() => res.status(httpStatus.NO_CONTENT).end()).catch(e => next(e));
+
+  const schedulingEnd = Scheduling.updateOne(
+    { user: bookingDeleteData.doctor, endDate: date, 'timeSlots.label': timeSlot },
+    {
+      $set:
+        {
+          'timeSlots.$.reserved': 'false',
+        },
+    },
+  );
+
+  schedulingEnd.then(() => res.status(httpStatus.NO_CONTENT).end()).catch(e => next(e));
+  // for reserving time slot end
+
+  bookings.then(() => res.status(httpStatus.NOT_FOUND).end())
+    .catch(e => next(e));
+};

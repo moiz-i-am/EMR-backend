@@ -24,10 +24,12 @@ function getDates(startDate, endDate) {
   const dateArray = [];
   let currentDate = moment(newDate);
   const stopDate = moment(endDate);
-  while (currentDate < stopDate) {
+  while (currentDate <= stopDate) {
     dateArray.push(moment(currentDate));
     currentDate = moment(currentDate).add(1, 'days');
   }
+  const e = new Date(endDate);
+  dateArray.push(moment(e.setDate(e.getDate() + 1)));
   return dateArray;
 }
 
@@ -39,19 +41,13 @@ exports.create = async (req, res, next) => {
     } = req.body;
 
     const middleDates = getDates(startDate, endDate);
-
-    const doctorData = {
-      timeSlots,
-      startDate,
-      endDate,
-      middleDates,
-      user: user._id,
-    };
-    const today = new Date();
-    if (startDate < today) {
-      console.log('wrong date choosen');
-    } else {
-      await Scheduling.findOne({ $or: [{ user: user._id, startDate: doctorData.startDate, endDate: doctorData.endDate }, { user: user._id, startDate: doctorData.startDate }, { user: user._id, endDate: doctorData.endDate }] }, (err, data) => {
+    for (let i = 0; i < middleDates.length; i++) {
+      const doctorData = {
+        timeSlots,
+        date: middleDates[i],
+        user: user._id,
+      };
+      Scheduling.findOne({ user: user._id, date: doctorData.date }, (err, data) => {
         if (err) {
           console.log(`MongoDB Error: ${err}`);
           return false; // or callback
@@ -59,8 +55,7 @@ exports.create = async (req, res, next) => {
         if (data) {
           console.log(`Already exists ${err}`);
         } else {
-          const scheduling = this.createNewScheduling(doctorData);
-          return responseHandler(res, httpStatus.CREATED, scheduling);
+          Scheduling.insertMany(doctorData);
         }
       });
     }
@@ -83,7 +78,7 @@ exports.list = async (req, res, next) => {
       user,
       date,
     };
-    const scheduling = await Scheduling.find({ $or: [{ user: scheduleData.user, startDate: date }, { user: scheduleData.user, endDate: date }, { user: scheduleData.user, middleDates: date }] }).select({ 'timeSlots': 1, '_id': 0 });
+    const scheduling = await Scheduling.find({ user: scheduleData.user, date: scheduleData.date }).select({ 'timeSlots': 1, '_id': 0 });
 
     const transformedScheduling = scheduling.map(schedule => schedule);
     res.json(transformedScheduling);
@@ -107,16 +102,13 @@ exports.update = async (req, res, next) => {
     startDate: date,
   };
 
-  // const scheduling = Scheduling.update({ user: scheduleData.user, $unset: { startDate: date } });
- // const schedulingEnd = Scheduling.update({ user: scheduleData.user, $unset: { endDate: date } });
-  const scheduling = Scheduling.update({ user: scheduleData.user, $pull: { middleDates: date } });
-
+  const scheduling = Scheduling.deleteOne({ user: scheduleData.user, date: scheduleData.date });
 
   scheduling.then(() => res.status(httpStatus.NO_CONTENT).end())
     .catch(e => next(e));
 
-
-  await Scheduling.findOne({ $or: [{ user: user._id, startDate: date, endDate: date }, { user: user._id, startDate: date }, { user: user._id, endDate: date }] }, (err, data) => {
+  // new to change user._id to user and remove error
+  await Scheduling.findOne({ user: user._id, date: scheduleData.date }, (err, data) => {
     if (err) {
       console.log(`MongoDB Error: ${err}`);
       return false; // or callback
@@ -143,10 +135,7 @@ exports.remove = (req, res, next) => {
     date,
   };
 
-  // const scheduling = Scheduling.update({ user: scheduleData.user, $unset: { startDate: date } });
- // const schedulingEnd = Scheduling.update({ user: scheduleData.user, $unset: { endDate: date } });
-  const scheduling = Scheduling.update({ user: scheduleData.user, $pull: { middleDates: date } });
-
+  const scheduling = Scheduling.deleteOne({ user: scheduleData.user, date: scheduleData.date });
 
   scheduling.then(() => res.status(httpStatus.NO_CONTENT).end())
     .catch(e => next(e));
