@@ -40,9 +40,11 @@ exports.create = async (req, res, next) => {
     //   if (data) {
     //     console.log(`Already exists ${err}`);
     //   } else {
+
     // for reserving time slot start
+
     const schedulingStart = Scheduling.updateOne(
-      { user: bookingData.doctor, startDate: date, 'timeSlots.label': timeSlot },
+      { user: bookingData.doctor, date: bookingData.date, 'timeSlots.label': timeSlot },
       {
         $set:
           {
@@ -53,30 +55,8 @@ exports.create = async (req, res, next) => {
 
     schedulingStart.then(() => res.status(httpStatus.NO_CONTENT).end()).catch(e => next(e));
 
-    const schedulingMiddle = Scheduling.updateOne(
-      { user: bookingData.doctor, middleDates: date, 'timeSlots.label': timeSlot },
-      {
-        $set:
-          {
-            'timeSlots.$.reserved': 'true',
-          },
-      },
-    );
-
-    schedulingMiddle.then(() => res.status(httpStatus.NO_CONTENT).end()).catch(e => next(e));
-
-    const schedulingEnd = Scheduling.updateOne(
-      { user: bookingData.doctor, endDate: date, 'timeSlots.label': timeSlot },
-      {
-        $set:
-          {
-            'timeSlots.$.reserved': 'true',
-          },
-      },
-    );
-
-    schedulingEnd.then(() => res.status(httpStatus.NO_CONTENT).end()).catch(e => next(e));
     // for reserving time slot end
+
     // creating new booking
     const booking = this.createNewBooking(bookingData);
     return responseHandler(res, httpStatus.CREATED, booking);
@@ -148,8 +128,9 @@ exports.remove = (req, res, next) => {
   });
 
   // for reserving time slot start
+
   const schedulingStart = Scheduling.updateOne(
-    { user: bookingDeleteData.doctor, startDate: date, 'timeSlots.label': timeSlot },
+    { user: bookingDeleteData.doctor, date: bookingDeleteData.date, 'timeSlots.label': timeSlot },
     {
       $set:
         {
@@ -160,29 +141,6 @@ exports.remove = (req, res, next) => {
 
   schedulingStart.then(() => res.status(httpStatus.NO_CONTENT).end()).catch(e => next(e));
 
-  const schedulingMiddle = Scheduling.updateOne(
-    { user: bookingDeleteData.doctor, middleDates: date, 'timeSlots.label': timeSlot },
-    {
-      $set:
-        {
-          'timeSlots.$.reserved': 'false',
-        },
-    },
-  );
-
-  schedulingMiddle.then(() => res.status(httpStatus.NO_CONTENT).end()).catch(e => next(e));
-
-  const schedulingEnd = Scheduling.updateOne(
-    { user: bookingDeleteData.doctor, endDate: date, 'timeSlots.label': timeSlot },
-    {
-      $set:
-        {
-          'timeSlots.$.reserved': 'false',
-        },
-    },
-  );
-
-  schedulingEnd.then(() => res.status(httpStatus.NO_CONTENT).end()).catch(e => next(e));
   // for reserving time slot end
 
   bookings.then(() => res.status(httpStatus.NOT_FOUND).end())
