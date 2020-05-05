@@ -71,6 +71,10 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  socketHandler: {
+    type: String,
+    default: null,
+  },
   specializations: [
     {
       type: String,
@@ -116,7 +120,7 @@ userSchema.pre('save', async function save(next) {
 userSchema.method({
   transform() {
     const transformed = {};
-    const fields = ['id', 'name', 'email', 'picture', 'role', 'createdAt', 'phone', 'location_city', 'location_state', 'location_country', 'specializations'];
+    const fields = ['id', 'name', 'email', 'picture', 'role', 'createdAt', 'phone', 'location_city', 'location_state', 'location_country', 'specializations', 'verified', 'socketHandler'];
 
     fields.forEach((field) => {
       transformed[field] = this[field];
