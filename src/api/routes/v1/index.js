@@ -5,6 +5,7 @@ const hospitalRoutes = require('./hospital.route');
 const labRoutes = require('./lab.route');
 const schedulingRoutes = require('./scheduling.route');
 const bookingRoutes = require('./booking.route');
+const prescriptionRoutes = require('./prescription.route');
 
 const router = express.Router();
 
@@ -24,5 +25,6 @@ router.use('/hospital', hospitalRoutes);
 router.use('/lab', labRoutes);
 router.use('/scheduling', schedulingRoutes);
 router.use('/booking', bookingRoutes);
+router.use('/prescription', prescriptionRoutes);
 
 module.exports = router;

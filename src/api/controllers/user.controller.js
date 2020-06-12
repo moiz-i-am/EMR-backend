@@ -25,6 +25,25 @@ exports.load = async (req, res, next, id) => {
 exports.get = (req, res) => res.json(req.locals.user.transform());
 
 /**
+ * Get user data by socket Id
+ * @public
+ */
+exports.getUserBySocket = async (req, res, next) => {
+  try {
+    const { socketId } = req.body;
+
+    // const userData = {
+    //   socketId,
+    // };
+    const data = await User.find({ socketHandler: socketId });
+    res.json(data);
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+/**
  * Get logged in user info
  * @public
  */
