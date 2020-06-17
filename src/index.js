@@ -67,6 +67,12 @@ io.on('connection', socket => {
     io.to(data.partnerId).emit('new-remote-operations', data);
   });
   // syncing editor end
+
+  // call ending start
+  socket.on('call-ending', (data) => {
+    io.to(data.partnerId).emit('new-call-end', data);
+  });
+  // call ending end
 });
 
 

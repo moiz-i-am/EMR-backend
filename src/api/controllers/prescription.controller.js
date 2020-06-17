@@ -41,3 +41,43 @@ exports.create = async (req, res, next) => {
     return next(error);
   }
 };
+
+/**
+ * Get prescription list for patient
+ * @public
+ */
+exports.listPatientPrescription = async (req, res, next) => {
+  try {
+    const { patientId } = req.body;
+
+    const prescriptionData = {
+      patientId,
+    };
+    const prescriptions = await Prescription.find({ patientId: prescriptionData.patientId });
+
+    const transformedPrescription = prescriptions.map(prescription => prescription);
+    res.json(transformedPrescription);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Get prescription list for doctor
+ * @public
+ */
+exports.listDoctorPrescription = async (req, res, next) => {
+  try {
+    const { doctorId } = req.body;
+
+    const prescriptionData = {
+      doctorId,
+    };
+    const prescriptions = await Prescription.find({ doctorId: prescriptionData.doctorId });
+
+    const transformedPrescription = prescriptions.map(prescription => prescription);
+    res.json(transformedPrescription);
+  } catch (error) {
+    next(error);
+  }
+};

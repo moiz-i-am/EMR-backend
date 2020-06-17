@@ -63,6 +63,10 @@ const userSchema = new mongoose.Schema({
     enum: roles,
     default: 'patient',
   },
+  rating: {
+    type: Number,
+    default: 0,
+  },
   picture: {
     type: String,
     trim: true,
@@ -120,7 +124,7 @@ userSchema.pre('save', async function save(next) {
 userSchema.method({
   transform() {
     const transformed = {};
-    const fields = ['id', 'name', 'email', 'picture', 'role', 'createdAt', 'phone', 'location_city', 'location_state', 'location_country', 'specializations', 'verified', 'socketHandler'];
+    const fields = ['id', 'name', 'email', 'picture', 'role', 'createdAt', 'phone', 'location_city', 'location_state', 'location_country', 'specializations', 'verified', 'socketHandler', 'rating'];
 
     fields.forEach((field) => {
       transformed[field] = this[field];
