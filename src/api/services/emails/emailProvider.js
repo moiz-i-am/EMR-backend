@@ -13,11 +13,10 @@ const sgTransport = require('nodemailer-sendgrid-transport');
 // api key https://sendgrid.com/docs/Classroom/Send/api_keys.html
 const options = {
   auth: {
-      api_key: sendGridIDPassword
-  }
-}
+    api_key: sendGridIDPassword,
+  },
+};
 
-  
 const transporter = nodemailer.createTransport(sgTransport(options));
 
 
