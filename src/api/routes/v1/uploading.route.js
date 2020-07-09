@@ -1,22 +1,35 @@
 const express = require('express');
-const controller = require('../../controllers/uploading.controller');
+const controllerImage = require('../../controllers/uploading.controller');
+const controllerFile = require('../../controllers/uploading-file.controller');
 
 const router = express.Router();
 
 router
-  .route('/labResults')
-  .post();
+  .route('/profilePicture')
+  .post(controllerImage.createNewImage);
 
 router
-  .route('/profilePicture')
-  .post(controller.createImage);
+  .route('/profilePicture/:userId')
+  .get(controllerImage.getSingleImage);
 
 router
   .route('/post')
-  .get(controller.getPosts);
+  .get(controllerImage.getPosts);
 
 router
-  .route('/post/:userId')
-  .get(controller.getPost);
+  .route('/labUpload')
+  .post(controllerFile.createNewFile);
+
+router
+  .route('/labUpload/:postId')
+  .get(controllerFile.getSingleFile);
+
+router
+  .route('/testResultsLab/:labId')
+  .get(controllerFile.getAllFilesLab);
+
+router
+  .route('/testResultsPatient/:userId')
+  .get(controllerFile.getAllFilesPatient);
 
 module.exports = router;

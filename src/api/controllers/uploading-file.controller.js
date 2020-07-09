@@ -1,10 +1,11 @@
 const { validationResult } = require('express-validator');
 
-const Uploading = require('../models/uploading.model');
+const UploadingFile = require('../models/uploading-file.model');
 
 
-exports.getPosts = (req, res, next) => {
-  Uploading.find()
+exports.getAllFilesLab = (req, res, next) => {
+  const labId = req.params.labId;
+  UploadingFile.find({ labId: labId })
     .then((posts) => {
       res
         .status(200)
@@ -18,7 +19,23 @@ exports.getPosts = (req, res, next) => {
     });
 };
 
-exports.createNewImage = (req, res, next) => {
+exports.getAllFilesPatient = (req, res, next) => {
+  const userId = req.params.userId;
+  UploadingFile.find({ userId: userId })
+    .then((posts) => {
+      res
+        .status(200)
+        .json({ message: 'fetched posts successfully', posts: posts });
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
+
+exports.createNewFile = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const error = new Error('Validation failed, entered data is incorrect.');
@@ -27,20 +44,22 @@ exports.createNewImage = (req, res, next) => {
   }
 
   if (!req.file) {
-    const error = new Error('No Image Provided.');
+    const error = new Error('No File Provided.');
     error.statusCode = 422;
     throw error;
   }
 
   const file = req.file.path;
-  const id = req.body.userId;
+  const lab = req.body.labId;
+  const user = req.body.userId;
 
-  const uploading = new Uploading({
-    imageURL: file,
-    userId: id,
+  const uploadingFile = new UploadingFile({
+    fileURL: file,
+    labId: lab,
+    userId: user,
   });
 
-  uploading
+  uploadingFile
     .save()
     .then((result) => {
       res.status(201).json({
@@ -57,12 +76,12 @@ exports.createNewImage = (req, res, next) => {
 };
 
 
-exports.getSingleImage = (req, res, next) => {
+exports.getSingleFile = (req, res, next) => {
 
-  const userId = req.params.userId;
+  const postId = req.params.postId;
 
-  Uploading.findOne({ userId: userId }).sort({ _id: -1 })
-  // Uploading.findById(userId)
+  // Uploading.findOne({ userId: userId }).sort({ _id: -1 })
+  UploadingFile.findById(postId)
     .then((post) => {
       if (!post) {
         const error = new Error('could not find post.');

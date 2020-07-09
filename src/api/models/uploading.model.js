@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const UploadingSchema = new mongoose.Schema({
-  fileURL: {
+  imageURL: {
     type: String,
     required: true,
   },
@@ -9,10 +9,6 @@ const UploadingSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
   },
-  // lab: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: 'lab',
-  // },
 }, {
   timestamps: true,
 });

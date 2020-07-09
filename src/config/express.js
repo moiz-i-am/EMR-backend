@@ -21,7 +21,7 @@ const multer = require('multer');
 const app = express();
 
 // configuration for multer
-const fileStorage = multer.diskStorage({
+const imageStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'images');
   },
@@ -30,7 +30,7 @@ const fileStorage = multer.diskStorage({
   },
 });
 
-const File = (req, file, cb) => {
+const FileImage = (req, file, cb) => {
   if (
     file.mimetype === 'image/png' ||
     file.mimetype === 'image/jpg' ||
@@ -42,6 +42,27 @@ const File = (req, file, cb) => {
   }
 };
 
+// configuration for multer
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'files');
+  },
+  filename: (req, file, cb) => {
+    cb(null, new Date().toISOString() + '-' + file.originalname);
+  },
+});
+
+// const File = (req, file, cb) => {
+//   if (
+//     file.mimetype === 'file/pdf' ||
+//     file.mimetype === 'file/word'
+//   ) {
+//     cb(null, true);
+//   } else {
+//     cb(null, false);
+//   }
+// };
+
 // request logging. dev: console | production: file
 app.use(morgan(logs));
 
@@ -50,10 +71,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // registring multer
-app.use(multer({ storage: fileStorage, fileFilter: File }).single('image'));
+// app.use(multer({ storage: imageStorage, fileFilter: FileImage }).single('image'));
+
+app.use(multer({ storage: fileStorage }).single('file'));
 
 // app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/images', express.static('images'));
+
+app.use('/files', express.static('files'));
 
 // gzip compression
 app.use(compress());
