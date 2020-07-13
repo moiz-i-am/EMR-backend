@@ -1,9 +1,9 @@
 const httpStatus = require('http-status');
 const { omit } = require('lodash');
 const User = require('../models/user.model');
-const Scheduling = require('../models/scheduling.model');
 const { responseHandler } = require('./general.controller');
-const { passwordReset } = require('./auth.controller');
+const emailProvider = require('../services/emails/emailProvider');
+
 /**
  * Load user and append to req.
  * @public
@@ -77,6 +77,12 @@ exports.create = async (req, res, next) => {
       dateRange,
     };
     const user = await this.createNewUser(patientData);
+    // sending confirmation email
+    const customer = await User.findOne({ email: email }).exec();
+    // user.password = password;
+    await customer.save();
+    emailProvider.sendSignupEmail(customer);
+
     return responseHandler(res, httpStatus.CREATED, user);
   } catch (error) {
     next(User.checkDuplicateEmail(error));

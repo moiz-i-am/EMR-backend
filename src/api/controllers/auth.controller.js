@@ -7,7 +7,7 @@ const { jwtExpirationInterval } = require('../../config/vars');
 const { omit } = require('lodash');
 const APIError = require('../utils/APIError');
 const emailProvider = require('../services/emails/emailProvider');
-const {responseHandler} = require('./general.controller');
+const { responseHandler } = require('./general.controller');
 
 /**
  * Returns a formated object with tokens
@@ -93,7 +93,7 @@ exports.refresh = async (req, res, next) => {
   }
 };
 
-exports.passwordReset = async(email)=>{
+exports.passwordReset = async (email) => {
   try {
     const user = await User.findOne({ email }).exec();
 
@@ -106,14 +106,13 @@ exports.passwordReset = async(email)=>{
   } catch (error) {
     throw new Error(error);
   }
-
-}
+};
 
 exports.sendPasswordReset = async (req, res, next) => {
   try {
     const { email } = req.body;
     await passwordReset(email);
-    return responseHandler(res, httpStatus.OK, {})
+    return responseHandler(res, httpStatus.OK, {});
   } catch (error) {
     return next(error);
   }

@@ -78,3 +78,29 @@ exports.sendPasswordChangeEmail = async (user) => {
     })
     .catch(() => console.log('error sending change password email'));
 };
+
+
+exports.sendSignupEmail = async (user) => {
+  const email = new Email({
+    views: { root: __dirname },
+    message: {
+      from: 'support@health-e.com',
+    },
+    // uncomment below to send emails in development/test env:
+    send: true,
+    transport: transporter,
+  });
+
+  email
+    .send({
+      template: 'signupSuccessful',
+      message: {
+        to: user.email,
+      },
+      locals: {
+        productName: 'HEALTH-E',
+        name: user.name,
+      },
+    })
+    .catch(() => console.log('error sending successful signup email'));
+};

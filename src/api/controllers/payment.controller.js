@@ -75,3 +75,60 @@ exports.chargePatient = async (req, res, next) => {
     });
   }
 };
+
+
+exports.accountSetup = async (req, res, next) => {
+
+  // const country = req.body.countryCode;
+  // const email = 'moizchaudhary35@gmial.com';
+
+  // if (
+  //   country !== 'CA' &&
+  //   country !== 'US'
+  // ) {
+  //   res.send({
+  //     success: 'false',
+  //     message: 'Error: Invalid country',
+  //   });
+  // } else {
+  //   stripe.accounts.create(
+  //     {
+  //       type: 'custom',
+  //       country,
+  //       email,
+  //       requested_capabilities: [
+  //         'card_payments',
+  //         'transfers',
+  //       ],
+  //     },
+  //     (err, account) => {
+  //       if (err) {
+  //         res.send({
+  //           success: 'false',
+  //           message: `Error: ${err.message}`,
+  //         });
+  //       } else {
+  //         console.log('account', account);
+
+  //         const { id } = account;
+
+  //         stripe.accounts.update(
+  //           id,
+  //           {
+  //             tos_acceptance: {
+  //               date: Math.floor(Date.now() / 1000),
+  //               ip: req.ip,
+  //             },
+  //           },
+  //         ).then(() => {
+  //           res.send({
+  //             success: true,
+  //             message: 'Account setup has begin.',
+  //             accountId: id,
+  //           });
+  //         });
+  //       }
+  //     },
+  //   );
+  // }
+};
