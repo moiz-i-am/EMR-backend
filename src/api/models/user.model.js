@@ -54,6 +54,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  price: {
+    type: Number,
+    default: '',
+  },
   services: {
     facebook: String,
     google: String,
@@ -124,7 +128,7 @@ userSchema.pre('save', async function save(next) {
 userSchema.method({
   transform() {
     const transformed = {};
-    const fields = ['id', 'name', 'email', 'picture', 'role', 'createdAt', 'phone', 'location_city', 'location_state', 'location_country', 'specializations', 'verified', 'socketHandler', 'rating'];
+    const fields = ['id', 'name', 'email', 'picture', 'role', 'createdAt', 'phone', 'location_city', 'location_state', 'location_country', 'price', 'specializations', 'verified', 'socketHandler', 'rating'];
 
     fields.forEach((field) => {
       transformed[field] = this[field];
