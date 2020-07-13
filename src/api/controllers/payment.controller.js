@@ -1,19 +1,18 @@
 const { validationResult } = require('express-validator');
 const Payment = require('../models/payment.model');
+const { StripeSecretkey } = require('../../config/vars');
 
-const stripe = require('stripe')('sk_test_51H3Pk4I5sVsTj98eKwZs95w0lx2cCmITCevmsxcNMl9Z4WkHLBYrXkTHIcRJ21gtbHbjlHNVOGHHH8wG4tkLDWfu00RpD6Dk6c');
+const stripe = require('stripe')(StripeSecretkey);
 
 exports.chargePatient = async (req, res, next) => {
   const {
-    id, amount, doctorId, doctorName, patientId, patientName
+    id, amount, doctorId, patientId, patientName, doctorName,
   } = req.body;
   try {
     const paymentIntent = stripe.paymentIntents.create({
       amount,
       currency: 'usd',
-      description: 'Delicious pizza',
-      // Verify your integration in this guide by including this parameter
-      // metadata: { integration_check: 'accept_a_payment' },
+      description: `Appointment booked patient name: ${patientName}, doctor name: ${doctorName}`,
       payment_method: id,
       confirm: true,
     });
@@ -74,61 +73,4 @@ exports.chargePatient = async (req, res, next) => {
       message: 'did not work',
     });
   }
-};
-
-
-exports.accountSetup = async (req, res, next) => {
-
-  // const country = req.body.countryCode;
-  // const email = 'moizchaudhary35@gmial.com';
-
-  // if (
-  //   country !== 'CA' &&
-  //   country !== 'US'
-  // ) {
-  //   res.send({
-  //     success: 'false',
-  //     message: 'Error: Invalid country',
-  //   });
-  // } else {
-  //   stripe.accounts.create(
-  //     {
-  //       type: 'custom',
-  //       country,
-  //       email,
-  //       requested_capabilities: [
-  //         'card_payments',
-  //         'transfers',
-  //       ],
-  //     },
-  //     (err, account) => {
-  //       if (err) {
-  //         res.send({
-  //           success: 'false',
-  //           message: `Error: ${err.message}`,
-  //         });
-  //       } else {
-  //         console.log('account', account);
-
-  //         const { id } = account;
-
-  //         stripe.accounts.update(
-  //           id,
-  //           {
-  //             tos_acceptance: {
-  //               date: Math.floor(Date.now() / 1000),
-  //               ip: req.ip,
-  //             },
-  //           },
-  //         ).then(() => {
-  //           res.send({
-  //             success: true,
-  //             message: 'Account setup has begin.',
-  //             accountId: id,
-  //           });
-  //         });
-  //       }
-  //     },
-  //   );
-  // }
 };

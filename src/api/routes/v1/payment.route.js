@@ -7,8 +7,4 @@ router
   .route('/charge')
   .post(controller.chargePatient);
 
-// router
-//   .route('/account/setup')
-//   .post(controller.accountSetup);
-
 module.exports = router;

@@ -16,4 +16,5 @@ module.exports = {
   },
   logs: process.env.NODE_ENV === 'production' ? 'combined' : 'dev',
   sendGridIDPassword: process.env.sendGridIDPassword,
+  StripeSecretkey: process.env.StripeSecretkey,
 };
