@@ -1,27 +1,10 @@
 const { validationResult } = require('express-validator');
 
-const UploadingFile = require('../models/uploading-file.model');
+const UploadingDocs = require('../models/uploading.docs.model');
 
-
-exports.getAllFilesLab = (req, res, next) => {
-  const labId = req.params.labId;
-  UploadingFile.find({ labId: labId })
-    .then((posts) => {
-      res
-        .status(200)
-        .json({ message: 'fetched posts successfully', posts: posts });
-    })
-    .catch((err) => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      next(err);
-    });
-};
-
-exports.getAllFilesPatient = (req, res, next) => {
+exports.getAllFilesDoctor = (req, res, next) => {
   const userId = req.params.userId;
-  UploadingFile.find({ userId: userId })
+  UploadingDocs.find({ userId: userId })
     .then((posts) => {
       res
         .status(200)
@@ -49,17 +32,17 @@ exports.createNewFile = (req, res, next) => {
     throw error;
   }
 
-  const file = req.file.path;
-  const lab = req.body.labId;
+  const document = req.file.path;
+  const hospital = req.body.hospitalId;
   const user = req.body.userId;
 
-  const uploadingFile = new UploadingFile({
-    fileURL: file,
-    labId: lab,
+  const uploadingDocs = new UploadingDocs({
+    docURL: document,
+    hospitalId: hospital,
     userId: user,
   });
 
-  uploadingFile
+  uploadingDocs
     .save()
     .then((result) => {
       res.status(201).json({
@@ -81,7 +64,7 @@ exports.getSingleFile = (req, res, next) => {
   const postId = req.params.postId;
 
   // Uploading.findOne({ userId: userId }).sort({ _id: -1 })
-  UploadingFile.findById(postId)
+  UploadingDocs.findById(postId)
     .then((post) => {
       if (!post) {
         const error = new Error('could not find post.');
