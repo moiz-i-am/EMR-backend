@@ -68,7 +68,7 @@ exports.create = async (req, res, next) => {
     const {
       name, email, password, role = 'patient', timeSlots, dateRange,
     } = req.body;
-    let patientData = {
+    const patientData = {
       name,
       email,
       password,

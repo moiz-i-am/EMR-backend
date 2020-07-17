@@ -56,5 +56,9 @@ router
    */
   .post(validate(createHospital), controller.create);
 
+router
+  .route('/update')
+  .post(controller.update);
+
 
 module.exports = router;

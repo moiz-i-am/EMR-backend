@@ -141,3 +141,25 @@ exports.remove = (req, res, next) => {
     .catch(e => next(e));
 };
 
+
+exports.listSelected = (req, res, next) => {
+  // const { user } = req;
+  const { user } = req.body;
+
+  const scheduleData = {
+    user,
+  };
+
+  Scheduling.find({ user: scheduleData.user })
+    .then((dates) => {
+      res
+        .status(200)
+        .json({ message: 'fetched dates successfully', dates: dates });
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};

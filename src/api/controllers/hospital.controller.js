@@ -27,7 +27,7 @@ exports.create = async (req, res, next) => {
 };
 
 /**
- * Get hispital list
+ * Get hospital list
  * @public
  */
 exports.list = async (req, res, next) => {
@@ -40,6 +40,23 @@ exports.list = async (req, res, next) => {
       }
     });
     res.json(transformedHospitals);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * add doctor in array
+ * @public
+ */
+exports.update = async (req, res, next) => {
+  try {
+    const {
+      hospitalId, doctorId,
+    } = req.body;
+
+    const hospital = await Hospital.findByIdAndUpdate({ _id: hospitalId }, { $push: { doctors: doctorId } });
+    res.json(hospital);
   } catch (error) {
     next(error);
   }
