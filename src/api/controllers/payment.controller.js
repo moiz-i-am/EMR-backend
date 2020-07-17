@@ -74,3 +74,20 @@ exports.chargePatient = async (req, res, next) => {
     });
   }
 };
+
+
+exports.getAllPaymentsForDoctor = (req, res, next) => {
+  const userId = req.params.userId;
+  Payment.find({ doctor: userId })
+    .then((payments) => {
+      res
+        .status(200)
+        .json({ message: 'fetched payments successfully', payments: payments });
+    })
+    .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};

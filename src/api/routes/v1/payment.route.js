@@ -7,4 +7,8 @@ router
   .route('/charge')
   .post(controller.chargePatient);
 
+router
+  .route('/paymentsList/:userId')
+  .get(controller.getAllPaymentsForDoctor);
+
 module.exports = router;

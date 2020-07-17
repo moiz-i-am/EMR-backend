@@ -77,11 +77,11 @@ exports.create = async (req, res, next) => {
       dateRange,
     };
     const user = await this.createNewUser(patientData);
-    // sending confirmation email
-    const customer = await User.findOne({ email: email }).exec();
-    // user.password = password;
-    await customer.save();
-    emailProvider.sendSignupEmail(customer);
+    // // sending confirmation email
+    // const customer = await User.findOne({ email: email }).exec();
+    // // user.password = password;
+    // await customer.save();
+    // emailProvider.sendSignupEmail(customer);
 
     return responseHandler(res, httpStatus.CREATED, user);
   } catch (error) {
