@@ -1,12 +1,12 @@
-const express = require('express');
-const validate = require('express-validation');
-const controller = require('../../controllers/lab.controller');
-const { createLab, listLabs } = require('../../validations/lab.validation');
+const express = require("express");
+const validate = require("express-validation");
+const controller = require("../../controllers/lab.controller");
+const reportsController = require("../../controllers/lab-report.controller");
+const { createLab, listLabs } = require("../../validations/lab.validation");
 const router = express.Router();
 
-
 router
-  .route('/')
+  .route("/")
   /**
    * @api {get} v1/hospital List Hospitals
    * @apiDescription Get a list of Hospitals
@@ -55,5 +55,9 @@ router
    * @apiError (Forbidden 403)     Forbidden        Only admins can create the data
    */
   .post(validate(createLab), controller.create);
+
+router
+  .route("/patient-list-doctors")
+  .post(reportsController.listPatientsForLabReports);
 
 module.exports = router;
